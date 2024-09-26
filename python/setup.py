@@ -21,12 +21,16 @@ import os
 import re
 import itertools
 import subprocess
+import sys
 import platform
 
 import setuptools
 import argparse
 import torch
 import torch.utils.cpp_extension as torch_cpp_ext
+
+# Workaround for isolated builds
+sys.path.insert(0, os.path.dirname(__file__))
 
 import generate_single_decode_inst, generate_single_prefill_inst, generate_batch_paged_decode_inst, generate_batch_paged_prefill_inst, generate_batch_ragged_prefill_inst, generate_dispatch_inc
 
@@ -35,8 +39,8 @@ root = pathlib.Path(__name__).parent
 # cuda arch check for fp8 at the moment.
 for cuda_arch_flags in torch_cpp_ext._get_cuda_arch_flags():
     arch = int(re.search("compute_\d+", cuda_arch_flags).group()[-2:])
-    if arch < 75:
-        raise RuntimeError("FlashInfer requires sm75+")
+    if arch < 61:
+        raise RuntimeError("FlashInfer requires sm61+")
 
 enable_bf16 = os.environ.get("FLASHINFER_ENABLE_BF16", "1") == "1"
 enable_fp8 = os.environ.get("FLASHINFER_ENABLE_FP8", "1") == "1"
