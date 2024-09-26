@@ -21,12 +21,16 @@ import os
 import re
 import itertools
 import subprocess
+import sys
 import platform
 
 import setuptools
 import argparse
 import torch
 import torch.utils.cpp_extension as torch_cpp_ext
+
+# Workaround for isolated builds
+sys.path.insert(0, os.path.dirname(__file__))
 
 import generate_single_decode_inst, generate_single_prefill_inst, generate_batch_paged_decode_inst, generate_batch_paged_prefill_inst, generate_batch_ragged_prefill_inst, generate_dispatch_inc
 
