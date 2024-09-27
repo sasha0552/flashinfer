@@ -54,10 +54,14 @@ __forceinline__ __device__ float ptx_log2(float x) {
  * \param x input
  */
 __forceinline__ __device__ half2 ptx_exp2(half2 x) {
+#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
   uint32_t y_u32;
   uint32_t x_u32 = half2_as_uint32(x);
   asm volatile("ex2.approx.f16x2 %0, %1;" : "=r"(y_u32) : "r"(x_u32));
   return uint32_as_half2(y_u32);
+#else
+  return __halves2half2(ptx_exp2(__low2half(x)), ptx_exp2(__high2half(x)));
+#endif
 }
 
 /*!
@@ -65,9 +69,13 @@ __forceinline__ __device__ half2 ptx_exp2(half2 x) {
  * \param x input
  */
 __forceinline__ __device__ half ptx_exp2(half x) {
+#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
   ushort y_u16;
   asm volatile("ex2.approx.f16 %0, %1;" : "=h"(y_u16) : "h"(__half_as_ushort(x)));
   return __ushort_as_half(y_u16);
+#else
+  return __float2half(ptx_exp2(__half2float(x)));
+#endif
 }
 
 /*!
@@ -123,7 +131,7 @@ __forceinline__ __device__ float tanh(float x) {
 #if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 750))
   asm volatile("tanh.approx.f32 %0, %1;" : "=f"(y) : "f"(x));
 #else
-  y = ::tanhf(x);
+  y = tanhf(x);
 #endif
   return y;
 }
