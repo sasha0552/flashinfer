@@ -20,7 +20,9 @@
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
 
+#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 700))
 #include <cuda/pipeline>
+#endif
 
 #include "cp_async.cuh"
 #include "mma.cuh"

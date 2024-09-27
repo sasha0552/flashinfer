@@ -22,7 +22,9 @@
 #include <cuda_runtime.h>
 
 #include <cstddef>
+#if (!defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 700))
 #include <cuda/pipeline>
+#endif
 #include <iostream>
 #include <optional>
 #include <random>
